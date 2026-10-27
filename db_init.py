@@ -1,4 +1,4 @@
-# PERSONNAGES (gentils)
+# HEROS (gentils)
 
 # perso 1
     # Pikachu
