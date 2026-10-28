@@ -26,11 +26,11 @@ MENU = [
 #]
 #
 HEROS = [
-    "H1",
-    "H2",
-    "H3",
-    "H4",
-    "H5"
+    {"nom": "H1", "atk": 20, "defense": 6, "pv": 80},
+    {"nom": "H2", "atk": 24, "defense": 8, "pv": 100},
+    {"nom": "H3", "atk": 17, "defense": 14, "pv": 115},
+    {"nom": "H4", "atk": 18, "defense": 12, "pv": 105},
+    {"nom": "H5", "atk": 22, "defense": 7, "pv": 85},
 ]
 
 #MONTRES = [
@@ -41,15 +41,17 @@ HEROS = [
 #   "M5"
 #]
 MONSTRES = [
-    "M1",
-    "M2",
-    "M3",
-    "M4",
-    "M5"
+    {"nom": "M1", "atk": 20, "defense": 6, "pv": 80},
+    {"nom": "M2", "atk": 24, "defense": 8, "pv": 100},
+    {"nom": "M3", "atk": 17, "defense": 14, "pv": 115},
+    {"nom": "M4", "atk": 18, "defense": 12, "pv": 105},
+    {"nom": "M5", "atk": 22, "defense": 7, "pv": 85},
 ]
 
 #JOUEURS = []
 JOUEURS = []
+
+
 
 #Menu
 #   Boucle sur tout element de MENU
@@ -57,6 +59,9 @@ JOUEURS = []
 def menu():
     for numero, texte in enumerate(MENU, start=1):
         print(f"{numero}. {texte}")
+
+
+
 
 #Choix (options, erreur)
 #   while True:
@@ -80,8 +85,10 @@ menu()
 numero = choix(MENU, erreur)
 print("Tu as choisi :", numero)
 
-#
-#
+
+
+
+
 #JEU
 #   CREATION D'UN JOUEUR
 #       pseudo = ""
@@ -106,6 +113,10 @@ pseudo = creation_joueur()
 print("ton pseudo est : ", pseudo)
 
 
+
+
+
+
 #   CREATION D'UNE EQUIPE
 #       equipe = liste vide
 #       Boucle sur tout les éléments de HEROS
@@ -113,7 +124,7 @@ print("ton pseudo est : ", pseudo)
 
 def afficher_heros():
     for numero, hero in enumerate(HEROS, start=1):
-        print(f"{numero}. {hero}")
+        print(f"{numero}. {hero['nom']} - {hero['atk']} ATK - {hero['defense']} DEF - {hero['pv']} PV")
 
 #       Choix (options, erreur)
 #           while True:
@@ -138,7 +149,7 @@ def creation_equipe():
             if hero in equipe:
                 erreur("Ce personnage est déjà dans ton équipe.")
             else:
-                equipe.append(hero)
+                equipe.append(dict(hero))
                 print("Ton équipe :", equipe)
         else:
             return equipe
@@ -146,14 +157,30 @@ def creation_equipe():
 equipe = creation_equipe()
 print("Équipe faite au complet :", equipe)
 
-#
+
+
+
+
+
+
 #   COMBAT INFINIE
 #   vague initialisé a 0
 #   while 1 perso > pv = 0
+
+
+
 #
 #       TIRAGE DU MONSTRE
 #       monstre = random.choice(MONSTRES)
 #       afficher monstre
+
+def tirer_monstre_aleas():
+    monstre = dict(random.choice(MONSTRES))
+    print(f"Monstre : {monstre['nom']} - {monstre['atk']} ATK - {monstre['defense']} DEF - {monstre['pv']} PV")
+    return monstre
+
+monstre = tirer_monstre_aleas()
+
 #           
 #       EQUIPE ATTAQUE MONSTRE
 #           pour chaque hero vivant
