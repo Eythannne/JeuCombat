@@ -51,7 +51,7 @@
     # ATK 18 - DEF 8 - PV 85
 
 
-# MONSTRES (méchants)
+# Monstre (méchants)
 
 # monstre 1
     # Élektek
