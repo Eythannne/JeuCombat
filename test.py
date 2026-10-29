@@ -13,10 +13,9 @@ from pymongo.errors import PyMongoError
 MENU = [
     "Lancer Jeu",
     "Afficher les scores",
-    "Quitter"
+    "Quitter",
 ]
 
-#
 #HEROS = [
 #   "H1"
 #   "H2"
@@ -24,13 +23,12 @@ MENU = [
 #   "H4"
 #   "H5"
 #]
-#
 HEROS = [
-    {"nom": "H1", "atk": 20, "defense": 6, "pv": 80},
-    {"nom": "H2", "atk": 24, "defense": 8, "pv": 100},
-    {"nom": "H3", "atk": 17, "defense": 14, "pv": 115},
-    {"nom": "H4", "atk": 18, "defense": 12, "pv": 105},
-    {"nom": "H5", "atk": 22, "defense": 7, "pv": 85},
+    {"nom": "H1", "pv": 30, "attaque": 8, "defense": 3},
+    {"nom": "H2", "pv": 25, "attaque": 10, "defense": 2},
+    {"nom": "H3", "pv": 40, "attaque": 6, "defense": 5},
+    {"nom": "H4", "pv": 20, "attaque": 12, "defense": 1},
+    {"nom": "H5", "pv": 35, "attaque": 7, "defense": 4},
 ]
 
 #MONTRES = [
@@ -41,27 +39,19 @@ HEROS = [
 #   "M5"
 #]
 MONSTRES = [
-    {"nom": "M1", "atk": 20, "defense": 6, "pv": 80},
-    {"nom": "M2", "atk": 24, "defense": 8, "pv": 100},
-    {"nom": "M3", "atk": 17, "defense": 14, "pv": 115},
-    {"nom": "M4", "atk": 18, "defense": 12, "pv": 105},
-    {"nom": "M5", "atk": 22, "defense": 7, "pv": 85},
+    {"nom": "M1", "pv": 20, "attaque": 7, "defense": 2},
+    {"nom": "M2", "pv": 30, "attaque": 9, "defense": 3},
+    {"nom": "M3", "pv": 25, "attaque": 11, "defense": 1},
+    {"nom": "M4", "pv": 40, "attaque": 8, "defense": 4},
+    {"nom": "M5", "pv": 50, "attaque": 10, "defense": 5},
 ]
-
-#JOUEURS = []
-JOUEURS = []
-
-
 
 #Menu
 #   Boucle sur tout element de MENU
 #       afficher numero element et texte element
-def menu():
-    for numero, texte in enumerate(MENU, start=1):
-        print(f"{numero}. {texte}")
-
-
-
+def afficher_menu():
+    for i, texte in enumerate(MENU):
+        print(f"{i + 1} - {texte}")
 
 #Choix (options, erreur)
 #   while True:
@@ -71,23 +61,35 @@ def menu():
 #           return choix
 #       Sinon
 #           Lancer fonction erreur
-def erreur(message="Choix invalide, réessaie."):
-    print(message)
+def erreur():
+    print("Choix invalide, réessaie !")
 
-def choix(options, erreur):
+def choix_utilisateur(options, erreur):
     while True:
-        reponse = input("Ton choix :").strip()
-        if reponse in [str(i) for i in range(1, len(options) + 1)]:
-            return int(reponse)
-        erreur()
+        reponse_utilisateur = input("Ton choix : ")
+        if reponse_utilisateur.isdigit() and 1 <= int(reponse_utilisateur) <= len(options):
+            return int(reponse_utilisateur)
+        else:
+            erreur()
 
-menu()
-numero = choix(MENU, erreur)
-print("Tu as choisi :", numero)
+def lancer_jeu():
+    pseudo_joueur = creer_joueur()
+    equipe_hero = creer_equipe()
+    vague = combat_infini(equipe_hero)
 
+def quitter_jeu():
+    sys.exit()
 
-
-
+def process():
+    while True:
+        afficher_menu()
+        c = choix_utilisateur(MENU, erreur)
+        if c == 1:
+            lancer_jeu()
+        elif c == 2:
+            afficher_scores()
+        else:
+            quitter_jeu()
 
 #JEU
 #   CREATION D'UN JOUEUR
@@ -100,32 +102,21 @@ print("Tu as choisi :", numero)
 #                   return pseudo
 #               Sinon
 #                   Lancer fonction erreur
-
-def creation_joueur():
+def creer_joueur():
+    pseudo_joueur = ""
+    print("Quel est ton pseudo ?")
     while True:
-        reponse = input("Choisis ton pseudo :").strip()
-        if len(reponse) > 3 and len(reponse) < 15:
-            return reponse
-        erreur()
-
-
-pseudo = creation_joueur()
-print("ton pseudo est : ", pseudo)
-
-
-
-
-
+        reponse_utilisateur = input("Pseudo : ")
+        if reponse_utilisateur != "":
+            pseudo_joueur = reponse_utilisateur
+            return pseudo_joueur
+        else:
+            erreur()
 
 #   CREATION D'UNE EQUIPE
 #       equipe = liste vide
 #       Boucle sur tout les éléments de HEROS
 #           afficher numero element et texte element
-
-def afficher_heros():
-    for numero, hero in enumerate(HEROS, start=1):
-        print(f"{numero}. {hero['nom']} - {hero['atk']} ATK - {hero['defense']} DEF - {hero['pv']} PV")
-
 #       Choix (options, erreur)
 #           while True:
 #               si equipe < 3
@@ -138,48 +129,46 @@ def afficher_heros():
 #                    Lancer fonction erreur
 #            sinon
 #                return equipe
+def creer_equipe():
+    equipe_hero = []
+    for i, hero in enumerate(HEROS):
+        print(f"{i + 1} - {hero['nom']} (PV {hero['pv']}, ATK {hero['attaque']}, DEF {hero['defense']})")
+    while len(equipe_hero) < 3:
+        print(f"Choisis ton héros {len(equipe_hero) + 1}/3")
+        c = choix_utilisateur(HEROS, erreur)
+        equipe_hero.append(dict(HEROS[c - 1]))
+    return equipe_hero
 
-def creation_equipe():
-    equipe = []
-    while True:
-        if len(equipe) < 3:
-            afficher_heros()
-            numero = choix(HEROS, erreur)
-            hero = HEROS[numero - 1]
-            if hero in equipe:
-                erreur("Ce personnage est déjà dans ton équipe.")
-            else:
-                equipe.append(dict(hero))
-                print("Ton équipe :", equipe)
-        else:
-            return equipe
-
-equipe = creation_equipe()
-print("Équipe faite au complet :", equipe)
-
-
-
-
-
-
+def equipe_est_en_vie(equipe_hero):
+    for hero in equipe_hero:
+        if hero["pv"] > 0:
+            return True
+    return False
 
 #   COMBAT INFINIE
 #   vague initialisé a 0
 #   while 1 perso > pv = 0
-
-
+def combat_infini(equipe_hero):
+    nb_vague = 0
+    monstre = tirer_monstre()
+    while equipe_est_en_vie(equipe_hero):
+        equipe_attaque(equipe_hero, monstre)
+        if monstre["pv"] <= 0:
+            print("Victoire !")
+            nb_vague = nb_vague + 1
+            monstre = tirer_monstre()
+        else:
+            monstre_attaque(equipe_hero, monstre)
+    return nb_vague
 
 #
 #       TIRAGE DU MONSTRE
 #       monstre = random.choice(MONSTRES)
 #       afficher monstre
-
-def tirer_monstre_aleas():
+def tirer_monstre():
     monstre = dict(random.choice(MONSTRES))
-    print(f"Monstre : {monstre['nom']} - {monstre['atk']} ATK - {monstre['defense']} DEF - {monstre['pv']} PV")
+    print("Un", monstre["nom"], "apparaît !")
     return monstre
-
-monstre = tirer_monstre_aleas()
 
 #           
 #       EQUIPE ATTAQUE MONSTRE
@@ -192,15 +181,43 @@ monstre = tirer_monstre_aleas()
 #           si monstre.pv <= 0
 #               afficher "Victoire"
 #               vague = vague + 1
+def equipe_attaque(equipe_hero, monstre):
+    for hero in equipe_hero:
+        if hero["pv"] > 0 and monstre["pv"] > 0:
+            degats = calculer_degats(hero["attaque"], monstre["defense"])
+            monstre["pv"] = monstre["pv"] - degats
+            print(hero["nom"], "inflige", degats, "dégâts")
+
 #
 #
-#       MONSTRE ATTAQUE EQUIPE
+#       MONSTRE ATTAQUE equipe
 #           sinon
 #               hero_cible choisis aleatoirement
 #               degats = monstre.attaque - hero.defense
 #               hero_cible.pv = hero_cible - degats
 #               si hero_cible.pv <= 0
 #                   afficher "hero KO"
+def monstre_attaque(equipe_hero, monstre):
+    hero_vivants = []
+    for hero in equipe_hero:
+        if hero["pv"] > 0:
+            hero_vivants.append(hero)
+    cible = random.choice(hero_vivants)
+    degats = calculer_degats(monstre["attaque"], cible["defense"])
+    cible["pv"] = cible["pv"] - degats
+    print(monstre["nom"], "inflige", degats, "dégâts à", cible["nom"])
+    if cible["pv"] <= 0:
+        print(cible["nom"], "est KO")
+
+
+
+
+def calculer_degats(attaque, defense):
+    degats = attaque - defense
+    if degats < 1:
+        degats = 1
+    return degats
+
 #
 #   ENREGISTRER LE SCORE
 #       Affchier "Defaite" et le nombre de vague final
@@ -210,6 +227,7 @@ monstre = tirer_monstre_aleas()
 #
 #   AFFICHER LE SCORE
 #       Lancer la fonction "Afficher les scores"
+
 #
 #
 #
@@ -228,3 +246,5 @@ monstre = tirer_monstre_aleas()
 #   Quitter
 #       sys.exit()
 #
+
+process()
